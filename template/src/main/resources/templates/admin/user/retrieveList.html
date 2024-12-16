@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layoutDefault}">
+
+<th:block layout:fragment="content">
+	<center>
+		사용자 관리 페이지입니다.
+		
+		<div id="grid"></div>
+		<br>
+		<br>
+		
+
+
+
+		<table>
+			<thead>
+				<tr>
+					<th>아이디</th>
+					<th>비밀번호</th>
+					<th>이름</th>
+					<th>권한</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="list : ${retrieveList}" th:if="${#strings.equals(list.get('userRole'), 'ADMIN')}">
+					<td th:text="${list.userId}"></td>
+					<td th:text="${list.password}"></td>
+					<td th:text="${list.userName}"></td>
+					<td th:text="${list.get('userRole')}"></td>
+				</tr>
+			</tbody>
+		</table>
+		
+	</center>
+	<script type="text/javascript">
+		console.log('${retrieveList}')
+	
+		const dataSource = {
+			api: {
+				readData: { url: '/admin/user/ajaxRetrieveList.do', method: 'get' }
+			}
+		};
+			
+		const grid = new tui.Grid({
+			el: document.getElementById('grid'),
+			data: dataSource,
+			scrollX: false,
+			scrollY: false,
+			pageOptions : {
+				perPage : 10
+			},
+			columns: [
+				{
+				  header: '아이디',
+				  name: 'userId'
+				},
+				{
+				  header: '비밀번호',
+				  name: 'password'
+				},
+				{
+				  header: '이름',
+				  name: 'userName'
+				},
+				{
+				  header: '권한',
+				  name: 'userRole'
+				}
+		    ]
+		});
+		grid.on('successResponse', function(ev) {
+			const {response} = ev.xhr;
+			const responseObj = JSON.parse(response);
+			const pagination = grid.getPagination();
+			pagination.setTotalItems(responseObj.data.pagination.totalCount);
+			pagination._paginate(responseObj.data.pagination.page);
+		});
+	 
+	</script>
+</th:block>
+</html>

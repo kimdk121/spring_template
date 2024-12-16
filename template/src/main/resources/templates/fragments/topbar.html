@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+	<th:block th:fragment="topbarFragment">
+	
+		<nav class="navbar navbar-expand-lg bg-body-tertiary">
+		  <div class="container-fluid">
+		    <a class="navbar-brand" href="/">Main</a>
+		    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+		      <span class="navbar-toggler-icon"></span>
+		    </button>
+		    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+		      <ul class="navbar-nav">
+		        
+		      </ul>
+		    </div>
+		  </div>
+		</nav>
+	
+		<script type="text/javascript">
+			$(document).ready(function(){
+				ajaxUserMenu();
+			});
+			
+			function ajaxUserMenu() {
+				var url = '/menu/ajaxUserMenu.do';
+				var formData = null;
+				ajaxCallback(url, formData, function(data) {
+					if(data.code=='00') {
+						console.log(data);
+						var html=''
+						var menuList = data.menuList;
+						for(var i=0; i < menuList.length; i++) {
+							if(data.menuList[i].subMenuList.length < 1) {
+								html+='<li class="nav-item">'
+								html+='	<a class="nav-link" href="#">'+data.menuList[i].menuNm+'</a>'
+								html+='</li>'							
+							} else {
+								html+='<li class="nav-item dropdown">'
+								html+='	<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">'+data.menuList[i].menuNm+'</a>'
+								html+='	<ul class="dropdown-menu">'
+								for(var j=0; j < data.menuList[i].subMenuList.length; j++) {
+									html+='		<li><a class="dropdown-item" href="'+data.menuList[i].subMenuList[j].uri+'">'+data.menuList[i].subMenuList[j].menuNm+'</a></li>'
+								}
+								html+='	</ul>'
+								html+='</li>'								
+							}
+						} 
+						$(".navbar-nav").append(html);
+					} else {
+						alert("메뉴 로딩에 실패하였습니다 \n"+data.exceptionMessage);
+					}
+					
+				});
+			}
+		</script>
+	</th:block>
+</html>

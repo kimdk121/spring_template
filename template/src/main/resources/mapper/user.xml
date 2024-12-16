@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mangoe.user.service.UserMapper">
+
+	<select id="retrieveList" resultType="com.mangoe.support.format.CamelMap">
+		/*
+		UserMapper.retrieveList
+		조회
+		*/
+		select
+			aa.*
+		from
+			(select
+				row_number() over () AS rnum
+				,count(*) over() as total_count
+				,a.*
+			from	
+				(select
+					*
+				from 
+					user_test
+				) a
+			)aa
+		<if test='firstRecordIndex != null and !firstRecordIndex.equals("")'>	
+			<![CDATA[
+			where rnum > #{firstRecordIndex}::int and rnum <= #{lastRecordIndex}::int
+			]]>
+		</if>
+	</select>
+	
+
+ 
+	<select id="retrieve" resultType="com.mangoe.support.format.CamelMap">
+		/*
+		UserMapper.retrieve
+		조회
+		*/
+		select
+			*
+		from 
+			user_test
+		where
+			user_id = #{userId}
+	</select>
+	
+	<insert id="insert">
+		/*
+		UserMapper.insert
+		등록
+		*/
+		insert into
+			user_test (
+				user_id
+				,password
+				,user_name
+				,bcrypt_password
+				,user_role
+			)
+			values(
+				#{userId}
+				,#{password}
+				,#{userName}
+				,#{bcryptPassword}
+				,'GUEST'
+			)
+	</insert>	
+	
+	<update id="update">
+		/*
+		UserMapper.update
+		수정
+		*/
+		update
+			user_test
+		set
+			password = #{password}
+			,user_name = #{userName}
+			,bcrypt_password = #{bcryptPassword}
+		where
+			user_id = #{userId}
+	</update>
+		
+	<update id="delete">
+		/*
+		UserMapper.delete
+		삭제
+		*/
+		delete from
+			user_test
+		where
+			user_id = #{userId}
+	</update>
+	
+</mapper>

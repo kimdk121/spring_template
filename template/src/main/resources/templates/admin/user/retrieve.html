@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layoutDefault}">
+
+<th:block layout:fragment="content">
+	<center>
+		회원정보 수정 페이지입니다.
+		
+		<form name="userForm" id="userForm" method="post">
+			<table>
+				<thead>
+					<tr>
+						<th>아이디</th>
+						<td><input type="text" id="userId" name="userId" th:value="${user.userId}" th:readonly="readonly"></td>
+					</tr>
+					<tr>
+						<th>비밀번호</th>
+						<td><input type="password" id="password" name="password"></td>
+					</tr>
+					<tr>
+						<th>이름</th>
+						<td><input type="text" id="userName" name="userName" th:value="${user.userName}"></td>
+					</tr>
+				</thead>
+			</table>
+		</form>
+		<input type="button" name="update" value="수정" th:onclick="ajaxUpdate();">
+		<input type="button" name="delete" value="탈퇴" th:onclick="ajaxDelete();">
+	</center>
+	<script type="text/javascript">
+		function ajaxUpdate() {
+			var url = '/admin/user/ajaxUpdate.do';
+			var formData = $('#userForm').serialize();
+			if(confirm('수정하시겠습니까?')) {
+				ajaxCallback(url, formData, function(data) {
+					if(data.code=='00') {
+						alert('수정되었습니다.');
+						location.href = '/mainForm.do';
+					} else {
+						alert("가입에 실패하였습니다 \n"+data.exceptionMessage);
+					}
+				});
+			}
+		}
+		
+		function ajaxDelete() {
+			var url = '/admin/user/ajaxDelete.do';
+			var formData = $('#userForm').serialize();
+			if(confirm('탈퇴하시겠습니까?')) {
+				ajaxCallback(url, formData, function(data) {
+					if(data.code=='00') {
+						alert('탈퇴되었습니다.');
+						location.href = '/logout';
+					} else {
+						alert("가입에 실패하였습니다 \n"+data.exceptionMessage);
+					}
+				});
+			}
+		}
+	</script>
+</th:block>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layoutLogin}">
+
+<th:block layout:fragment="content">
+	<center>
+		로그아웃 되었습니다.
+	</center>
+
+	<script type="text/javascript">
+		$(document).ready(function(){
+			setTimeout(function() {
+				location.href = '/login/loginForm.do';
+				}, 3000);
+		});
+	</script>
+</th:block>
+</html>
